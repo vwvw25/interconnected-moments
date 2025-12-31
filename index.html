@@ -1039,7 +1039,6 @@
     <script>
         // Word falling animation
         const words = document.querySelectorAll('.title-word');
-        const authorName = document.querySelector('.author-name');
         const svg = document.getElementById('connectionsSvg');
         
         // Stagger the falling animation
@@ -1049,9 +1048,8 @@
             }, 300 + (index * 400));
         });
 
-        // Show author name after all words have fallen
+        // Draw connections after all words have fallen
         setTimeout(() => {
-            authorName.classList.add('visible');
             drawConnections();
         }, 300 + (words.length * 400) + 500);
 
@@ -1093,11 +1091,17 @@
         }
 
         // Redraw connections on resize
+        let connectionsDrawn = false;
         window.addEventListener('resize', () => {
-            if (authorName.classList.contains('visible')) {
+            if (connectionsDrawn) {
                 drawConnections();
             }
         });
+        
+        // Mark connections as drawn after initial draw
+        setTimeout(() => {
+            connectionsDrawn = true;
+        }, 300 + (words.length * 400) + 600);
 
         // Intersection Observer for fade-in animations
         const observerOptions = {
