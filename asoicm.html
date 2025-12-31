@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Series of Interconnected Moments — Victoria Ward</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --paper: #f8f6f1;
+            --paper-dark: #ebe8e1;
+            --accent: #8b7355;
+            --accent-light: #c4b49a;
+            --line-color: rgba(139, 115, 85, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(180deg, var(--paper) 0%, var(--paper-dark) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(139, 115, 85, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 115, 85, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* SVG Lines Container */
+        .lines-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .lines-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .connection-line {
+            stroke: var(--line-color);
+            stroke-width: 1;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .connection-line.visible {
+            opacity: 1;
+        }
+
+        /* Title Words */
+        .title-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .title-word {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            display: inline-block;
+            margin: 0 0.3em;
+            opacity: 0;
+            transform: translateY(-100vh);
+            position: relative;
+        }
+
+        .title-word.fallen {
+            animation: fallDown 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .title-word::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.6s ease 0.3s;
+        }
+
+        .title-word.fallen::after {
+            width: 100%;
+        }
+
+        @keyframes fallDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100vh) rotate(-5deg);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) rotate(2deg);
+            }
+            80% {
+                transform: translateY(-10px) rotate(-1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        .title-line {
+            display: block;
+            margin: 0.5rem 0;
+        }
+
+        .author-name {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--accent);
+            margin-top: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+            letter-spacing: 0.15em;
+        }
+
+        .author-name.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            animation: fadeInUp 1s ease 4s forwards;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(0.5); opacity: 0.5; }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Chapter Navigation */
+        .chapter-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chapter-dot {
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chapter-dot:hover,
+        .chapter-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        /* Epigraph Section */
+        .epigraph-section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem 2rem;
+            background: var(--ink);
+            color: var(--paper);
+            position: relative;
+        }
+
+        .epigraph {
+            max-width: 700px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .epigraph.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .epigraph blockquote {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            font-style: italic;
+            line-height: 2;
+            margin-bottom: 2rem;
+            color: var(--paper-dark);
+        }
+
+        .epigraph cite {
+            font-size: 1rem;
+            font-style: normal;
+            letter-spacing: 0.1em;
+            color: var(--accent-light);
+            display: block;
+        }
+
+        .epigraph cite span {
+            display: block;
+            font-style: italic;
+            margin-top: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        /* Chapters */
+        .chapters-container {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .chapter {
+            padding: 8rem 0;
+            position: relative;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .chapter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chapter::before {
+            content: '';
+            position: absolute;
+            left: -100px;
+            top: 6rem;
+            width: 80px;
+            height: 1px;
+            background: var(--accent-light);
+            opacity: 0;
+            transition: all 0.8s ease 0.3s;
+        }
+
+        .chapter.visible::before {
+            opacity: 1;
+            left: -60px;
+        }
+
+        .chapter-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 2.5rem;
+            display: block;
+        }
+
+        .chapter-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .chapter-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin-top: 2rem;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.8s ease 0.5s;
+        }
+
+        .chapter.visible .chapter-title::after {
+            transform: scaleX(1);
+        }
+
+        .chapter-content {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #2a2a2a;
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.8rem;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        .chapter-content p:first-of-type {
+            text-indent: 0;
+        }
+
+        .chapter-content p:first-of-type::first-letter {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 4.5rem;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.15em;
+            padding-top: 0.1em;
+            color: var(--accent);
+        }
+
+        /* Chapter date styling */
+        .chapter-date {
+            display: block;
+            text-indent: 0 !important;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+
+        /* Short chapter special styling */
+        .chapter.short-chapter .chapter-content p:first-of-type::first-letter {
+            font-size: 3.5rem;
+        }
+
+        .chapter.short-chapter .chapter-content {
+            font-size: 1.4rem;
+        }
+
+        .chapter.short-chapter .chapter-content p {
+            text-indent: 0;
+            text-align: left;
+        }
+
+        /* Poetic line breaks */
+        .poetic-break {
+            margin: 2.5rem 0;
+            text-align: center;
+            text-indent: 0 !important;
+        }
+
+        .poetic-lines {
+            text-indent: 0 !important;
+            text-align: left !important;
+            margin: 2rem 0;
+            padding-left: 3rem;
+        }
+
+        /* Scene break */
+        .scene-break {
+            text-indent: 0 !important;
+            text-align: center !important;
+            margin: 2.5rem 0 !important;
+            letter-spacing: 0.5em;
+            color: var(--accent);
+        }
+
+        /* Pull Quote */
+        .pull-quote {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+            position: relative;
+            color: var(--accent);
+            text-indent: 0 !important;
+        }
+
+        .pull-quote::before,
+        .pull-quote::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: var(--accent-light);
+        }
+
+        .pull-quote::before {
+            top: 0;
+        }
+
+        .pull-quote::after {
+            bottom: 0;
+        }
+
+        /* Chapter Divider */
+        .chapter-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 0;
+            gap: 1rem;
+        }
+
+        .divider-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .divider-line {
+            width: 60px;
+            height: 1px;
+            background: var(--accent-light);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 6rem 2rem;
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .footer-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .footer-author {
+            font-style: italic;
+            color: var(--accent-light);
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chapter-nav {
+                display: none;
+            }
+
+            .chapter::before {
+                display: none;
+            }
+
+            .chapter {
+                padding: 5rem 0;
+            }
+
+            .poetic-lines {
+                padding-left: 1rem;
+            }
+        }
+
+        /* Reading Progress */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            z-index: 1000;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="lines-container">
+            <svg id="connectionsSvg"></svg>
+        </div>
+        
+        <div class="title-container">
+            <span class="title-line">
+                <span class="title-word" data-index="0">A</span>
+                <span class="title-word" data-index="1">Series</span>
+                <span class="title-word" data-index="2">of</span>
+            </span>
+            <span class="title-line">
+                <span class="title-word" data-index="3">Interconnected</span>
+            </span>
+            <span class="title-line">
+                <span class="title-word" data-index="4">Moments</span>
+            </span>
+        </div>
+        
+        <p class="author-name">Victoria Ward</p>
+        
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Epigraph -->
+    <section class="epigraph-section" id="epigraph">
+        <div class="epigraph">
+            <blockquote>
+                "…We must remember that our imagination has been moulded in lifelong contact with things and events that are correctly described by Newtonian mechanics. It will, therefore, be best if we leave behind the collection of prejudices that we sometimes refer to as common sense. Again and again we shall have to examine with experiments the firmness of the ground on which we stand, and we shall have to entrust ourselves to the guidance of mathematics as we move about"
+            </blockquote>
+            <cite>
+                Klaus Ziock
+                <span>Basic Quantum Mechanics</span>
+            </cite>
+        </div>
+    </section>
+
+
+
+    <!-- Chapter Navigation -->
+    <nav class="chapter-nav">
+        <div class="chapter-dot" data-chapter="prologue"></div>
+        <div class="chapter-dot" data-chapter="1"></div>
+        <div class="chapter-dot" data-chapter="2"></div>
+        <div class="chapter-dot" data-chapter="3"></div>
+        <div class="chapter-dot" data-chapter="4"></div>
+        <div class="chapter-dot" data-chapter="5"></div>
+        <div class="chapter-dot" data-chapter="8"></div>
+    </nav>
+
+    <!-- Chapters -->
+    <main class="chapters-container">
+        
+        <!-- Prologue -->
+        <article class="chapter" id="chapter-prologue">
+            <span class="chapter-number">Prologue</span>
+            <div class="chapter-content">
+                <p>I don't think anyone ever realises just how different the worlds we live in are. And not in the ordinary way people mean it, like where we live, or how much we have. Or even our story. Or our experiences. But what they form. The world as we have formed it. Inside our heads.</p>
+                
+                <p>There was a boy two years above me in high school, who carried a black leather briefcase to school. He wore a suit and tie. He was tall, but somehow always small and narrow, as if he was trying to tuck himself in, both hands on his briefcase handle. I heard he was really good at maths. Extraordinary. I felt competitive about that until I saw one of his paintings. He painted the most extraordinary paintings. I paint. But this was on another level. And no one had ever taught him how. He just did it. A still life he'd painted was part of a display of student artwork on the wall outside the music room. The only classroom we weren't allowed until Mr. Hearne opened the door, the glass corridor a holding pen for the baboons who couldn't be trusted around 6 Yamahas and a glockenspiel. And I'd stare at it, honing in on the brush strokes. The segments of a clementine, the mystery of the subtle glow emanating from its centre. Trying to deconstruct it. Work out how he'd broken it down. Into pieces. Strokes. How he'd known to put this stroke and this colour precisely here, just like this so that when you zoomed out, stroke upon stroke created something that looked just like reality.</p>
+                
+                <p>He'd recreated it. Reality.</p>
+                
+                <p>But you could tell the world was a very different place for him. How he saw it. How he experienced it. How he felt it. And people expecting him to be just the same as them, bearing in mind how different his experience was. It just wasn't possible. It wasn't reasonable. Or even rational. He just saw the world entirely differently. Maybe in some places with more clarity. Maybe, in some places, with less.</p>
+                
+                <p>But the thing about Ben was, that he was so obviously different, that we all knew how different he was.</p>
+                
+                <p>"Paint what you see" my Dad had told me that's what all the great artists said. But his favourites were the impressionists. Monet. Cézanne. Renoir. So I always took it in that context. These new rebels, who wanted to do something more than just reflect reality back at people. Who wanted to do more than capture the best, most beautiful version of the world around us. They wanted to do something different. Something more. They wanted to shine a light through the prism of perspective, and show people a world they'd never seen before. Their world.</p>
+                
+                <p>For them you had to create it stroke upon stroke, layering it up. Until you got a picture of something you'd never seen before. Something you couldn't see without them. Couldn't see it unless one day they had sat down, not with the intention of showing it to you, but with the intention of bringing it into creation, and in that process to have expressed their passion, their love, their tribute, their explanation, more often than not filtered through years of pain.</p>
+                
+                <p class="poetic-lines">Not in spite of the pain,<br>but because it gave it meaning.</p>
+                
+                <p>Maybe all they wanted to say is look, I am different to you.</p>
+                
+                <p>But instead people looked and said. He can paint.</p>
+                
+                <p>And finally they were allowed to be different without being bad.</p>
+                
+                <p>I wish I could paint like that.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 1 -->
+        <article class="chapter short-chapter" id="chapter-1">
+            <span class="chapter-number">Chapter One</span>
+            <div class="chapter-content">
+                <p>That cat.</p>
+                <p>That stupid fucking cat.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 2 -->
+        <article class="chapter" id="chapter-2">
+            <span class="chapter-number">Chapter Two</span>
+            <div class="chapter-content">
+                <span class="chapter-date">25th September 2001</span>
+                
+                <p>I spread my fingers across the coarse copier paper, pressing the brochure beneath it hard into my legs.</p>
+                
+                <p>The day is warm, and as we trace our slow path along the tree-lined campus, the dappled light of a bright autumn sun moves serenely across the page.</p>
+                
+                <p>The map is hand drawn. A copy of a copy of a copy, reproduced in black and white, its weathered lines fading in and out.</p>
+                
+                <p>To our left, the first of five rectangles appears. A two storey block studded with three rows of windows. As we pass, a few hundred metres ahead, its duplicate comes into view at the same strange angle to the road.</p>
+                
+                <p>I find myself slowly counting. One…two…three...</p>
+                
+                <p>Year after year, intake after intake had found their way to Westwood Campus. All seeking something infinitely different, and yet infinitely similar.</p>
+                
+                <p>Now with each metre we creep, I am coming into contact with something. It seems to enter through my toes. First my legs fizz and lose feeling, melting into the seat beneath me, before it rises up to my stomach.</p>
+                
+                <p>She won't notice, won't attune at all or allow any leeway for how it might feel to be inside my body right now. The subtle, steady tik tik tik of the timebomb beside me.</p>
+                
+                <p>It's been one month since results day. Since I sat on the stairs, running my finger nails over the rattan base of the polyester pile as I waited on the line to make the decision time had forced. I'd spent the summer staring into the depths of the deep end until time had finally come up behind me and pushed. Until time had forced my decision. Six months since I'd stood on a station platform staring at the undercarriage of a train and wondered how I'd ever thought I carried enough interest to sit out three years of a mechanical engineering degree. Even if it did mean a place at a better university. Eight months since I'd spent hours in the library pouring over the hefty UCAS course directory, imagining this version of myself and that. Nine months since I'd received the predicted grades that had taken seven years of my hard work, screwed them into a tight ball and thrown them into the abyss. And then, this morning, I'd packed up my things, left the small town I'd spent 18 years growing up in, and set sail for a brave new world full of hope and promise.</p>
+                
+                <p>I'm here to chase a feeling. The feeling of the last stretch of road before the first large buildings of the city. The promise of bigger. More refined. Tree lined roads. Grand hotels with huge columns and ornate ceilings. The large houses on the last stretch of railway before country gives way to city. Another world which existed outside of this town. A world I was built for. Could expand out into, finally taking my true shape.</p>
+                
+                <p>When some people go to university they're looking for reinvention. But I wasn't. I hadn't needed it or even wished for it. Even in the obscurity of high school I'd had a clarity that the problem wasn't me. By sixth form, the educational system had finally sifted, and it was confirmed. Those who stayed had sworn an unspoken allegiance to something they could no longer pretend to have disdain for. No longer bully those who sought it. And the silent truth of their past duplicity was a leveller. It's hard to put people down once you've signalled openly that you want the very thing they have. Your jealousy becomes opaque.</p>
+                
+                <p>We were no longer guests in their kingdom, they were guests in ours. We found a new level of freedom, the once disparate fringes of faces we'd known for years, no longer being dispersed, diluted. And instead forming into a social group. It had turned into what I expected university to be. What I now expected university to be an even better version of. I'm looking for the world, the people, that exist outside of here. For the riotous fun in the sliver of venn diagram between freedom and responsibility.</p>
+                
+                <p>Fifteen minutes earlier we'd been hurtling along the M1, the CD player drowned out, our compact black shell stuffed to capacity with home comforts, a random selection of crockery and a bulky PC.</p>
+                
+                <p>As the clock ticked into hour four of our journey, our pace had slowed to the roads of everyday life and I'd reached behind me to pull out the welcome pack.</p>
+                
+                <p>I'd been disappointed when I'd first received the news I'd been placed in Bericote, the furthest hall from main campus on its own strange little satellite campus. But I'd applied late and Bericote was, I guessed, home of the last come last served.</p>
+                
+                <p>Finally, it comes into view. The fifth and final masterpiece of its architect's no-expense brutalism, cast against a perfect blue sky. The solid silhouette of mid-century flats and army barracks. Of the towering highrise of council flats in the town centre. Perfunctory. Anonymous. Anonymising.</p>
+                
+                <p>We pull into the driveway under the cover of a large Oak. When the engine stops the silence stretches into every corner of my awareness.</p>
+                
+                <p>I am suddenly aware of the distance—how far my bed is, my home, my room. The ceiling I'd stared up at for countless hours, filling the spaces reality had yet to sweep.</p>
+                
+                <p>I place my hand on the door handle, to find the will to open it vacated.</p>
+                
+                <p>There is a moment walking on to centre stage, when you feel the audience's attention entirely upon you, and you can either seize or be swallowed by it. There is no moment. Never any moment. To collect. Wait. Not in moments like these.</p>
+                
+                <p>I collect keys from the housemaster, a receding professor in his forties who successfully detaches himself almost entirely from the interaction. There is something in his demeanor which treats me like a problem, or at the very least a potential one. As if it were only a matter of time before our excitement, or nerves, or some mixture of the two were transmuted into 3am singing and vomiting on his doorstep.</p>
+                
+                <p>I return to the car with the keys.</p>
+                
+                <p>I wish that she would hang back, but if I let on for even a second, it will be repaid with some embarrassment. Some splash of anger rising hotly, anticipated but no less stinging.</p>
+                
+                <p>And so we are, as if in equal ownership of this space, this moment.</p>
+                
+                <p>The hall doors are already wedged open.</p>
+                
+                <p>Inside the building, the full vision of its creator is complete. School-ish. Basic. Perfunctory. All badly stained wood, industrial brown carpets and eggshell walls.</p>
+                
+                <p>After climbing two flights, I turn a key in an unfamiliar lock and an unfamiliar room stares blankly back at me.</p>
+                
+                <p>Slowly, we begin to fill it with the familiar, the necessary. The unnecessary.</p>
+                
+                <p>The giant black tower of my PC is unyielding, offering nowhere to grip but a small ledge along its top. I heave it up the stairs by my fingertips, swinging it low between my knees in an unsuccessful attempt to stop it from hitting them. My duvet finds its new bed. My monitor, a new desk. I proudly hang a new fur collared wool coat in my closet. Until we are all displaced together.</p>
+                
+                <p>As we shuttled the contents of the car back and forth, my awareness of the room across the hall had slowly been growing. Its door open, I hear voices, occasional laughter.</p>
+                
+                <p>When we are done, I long for her to be gone and for her not to go, aware of the eggshells laid out before me like a firewalk. Afraid of the rising red flash of embarrassment, the g-force of stress, hot and slick, that would run like a rod through my body.</p>
+                
+                <p>Out on the periphery of my overwhelming now, is her need, her sadness. A long journey home, alone, to a small town that no-one here will have heard of. An empty house. A cat waiting to be fed.</p>
+                
+                <p>But this is what she's been longing for, what she wanted. She's finally free. Rid of me.</p>
+                
+                <p>Before she leaves, there is a lump in my throat. She hugs me, burying my chin in her crisp hair, my nose filling with the familiar dry scent of hairspray, perfume and smoke.</p>
+                
+                <p>"You're so tense" she would always say as I stiffened into her hugs. But here she's vulnerable, sad. Nothing to provoke. And it feels, as it has for years, like I am the giver of comfort. The supporter of falling things.</p>
+                
+                <p>When the door closes behind her a moment of complete somethingness sweeps over me. The otherness of this place. Our marriage of convenience. This feeling of not having chosen and not having a choice.</p>
+                
+                <p>From somewhere deep within I am being called to run. To turn around. Flee. But there is nothing and no-one to flee to.</p>
+                
+                <p>For years now the future had been something I'd stood on tiptoes, stretching to grasp.</p>
+                
+                <p class="poetic-break">And suddenly,</p>
+                
+                <p class="poetic-break" style="margin-top: 0;">I am in it.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 3 -->
+        <article class="chapter" id="chapter-3">
+            <span class="chapter-number">Chapter Three</span>
+            <div class="chapter-content">
+                <p>I'd been told, and so imagined, that everyone would be as out of place as I was today. That all you had to do was leave your door open and exist and people would be enquiring, friendly.</p>
+                
+                <p>So though I want nothing more than to keep my door closed, I open it wide.</p>
+                
+                <p>I begin unpacking: a suitcase into a built-in closet, toiletries on the shelf of a small white sink with a mirror above, a large black desktop monitor and keyboard onto a desk the tower has already been placed under.</p>
+                
+                <p>At first I'd hoped they wouldn't come, not just yet. But then they hadn't come at all. And the coldness of this had struck me with a certain dread. I'd grown anxious. Felt their cold shoulder. Their failure in friendliness, in empathy.</p>
+                
+                <p>They'd stayed in their group, and it spoke beyond words. It told me how this place was and how it would be. It had the feeling of being outside as soon as I stepped in.</p>
+                
+                <p>The longer it goes on, the worse I feel.</p>
+                
+                <p>I place the body of a stereo, fresh from its box, onto a low cabinet and connect its speakers. When I press the power button, its centre pushes forward, illuminating in blue LCD. I transfer an album I'd just bought after seeing the singer perform at the Grammys into its empty tray. There are no batteries for the remote. I press play and the singer's acapella voice cracks the silence.</p>
+                
+                <p>I take one of two paintings I've brought, an acrylic on a square piece of corrugated card, and stand on my bed, bluetacking it to the wall above. Behind me, someone lingers in the door frame.</p>
+                
+                <p>"You know we're only here for 10 weeks, right?"</p>
+                
+                <p>A hot shame rises instantly.</p>
+                
+                <p>I turn and stare back at him. He is wiry but not tall, his satisfied grin cartoonish against his bloodhound eyes.</p>
+                
+                <p>'I've met you before' I want to say. 'You are nothing new'.</p>
+                
+                <p>But instead my brain redacts itself and gives him only silence.</p>
+                
+                <p>He lingers for a moment in his victory, something in my stare animating him slightly, before turning and disappearing from view. No doubt to tell the others about the weird, silly girl who has brought too much stuff.</p>
+                
+                <p>The feeling of unease deepens.</p>
+                
+                <p>The laughter coming from the room opposite begins to feel performative. Like the hair flips of the cool girls at school. Their performance of belonging, punctuating my singularity.</p>
+                
+                <p>I'll need to be the one to go to them. To say hi. To join in. And so I push myself across the corridor.</p>
+                
+                <p>In the middle of a room just like mine, a guy with brown hair and blue eyes and a square jaw leans confidently back in his desk chair, the cord of his grey towelling dressing gown hanging between his open legs.</p>
+                
+                <p>Three or four others sit on the bed, their backs against the wall, their attention unwavering on the PC monitor on his desk.</p>
+                
+                <p>He says hey before the group pulls him back.</p>
+                
+                <p>'B,' says one. 'No, C, I think it's C,' says another in a crisp RP accent. The familiar graphics of Who Wants To Be A Millionaire fill the screen.</p>
+                
+                <p>Their attention is roped off. A pristine lawn.</p>
+                
+                <p>I could have turned, walked away. Not acquiesced to any of it. To wanting to be around the kind of people who didn't come say hello. Who ignored someone when they walked in the room. Who played the Who Wants To Be A Millionaire PC game on their second day of uni. As if introductions were unnecessary. Redundant. Uncool. As if I wouldn't be reading the room if I were to fail to recognise the relative unimportance of the arrival of some entirely new, entirely adrift human being, compared to correctly determining which planet in the solar system has the longest day.</p>
+                
+                <p>But instead I take the smallness I have been awarded to the last space on the bed and sit, stuck in whatever it is I've just walked into.</p>
+                
+                <p>The game is lost at £150,000 and we move to the kitchen. A girl with thick black hair, blue eyes and freckles commands the room in a loud northern accent. Frequently tipping over into loud bursts of laughter, Kate is a pint drinking ladette in an oversized hoodie and low slung jeans.</p>
+                
+                <p>She has become fast friends with Southern Kate, who's a year older, having taken a gap year. She discloses this like she's name dropping a celebrity parent, anticipating an awe that is somewhat dulled by her having the look and feel of someone who's already driving their new Vauxhall Corsa to the office each day. She absorbs me with an air of knowing maturity, which to me, feels only like a rush to the mundane.</p>
+                
+                <p>The third in their newly formed trio joins us. Speaking in an RP accent with a Persian twang, Patrick switches easily between the magical and the grave. Puppeteer and puppet, he blends the sincere with the clownish, speaking with the wisdom of a genie who could grant your every wish, but would counsel you on it first.</p>
+                
+                <p>"Patrick's rich" Kate says, a disclosure it's clear he isn't entirely uncomfortable with.</p>
+                
+                <p>I discover they all arrived yesterday, along with the rest of surnames A-M, a bond so minimal that it barely existed before our 'N-Z' otherness solidified it.</p>
+                
+                <p>It's 6:05 pm when I discover that the canteen closes early on Sundays. I'm already starving and haven't brought any food with me. I go back to my room. In the pale blue LCD glow, the tears I have been holding for the last four hours finally liberate themselves.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 4 -->
+        <article class="chapter" id="chapter-4">
+            <span class="chapter-number">Chapter Four</span>
+            <div class="chapter-content">
+                <p>He was blurry around the edges the first time I saw him, and much further away than he possibly could have been.</p>
+                
+                <p class="scene-break">***</p>
+                
+                <p>At 5:56pm I'd put it off for as long as I could. I scramble to find the reading glasses I never wear, hoping they'd make it less obvious I'd been crying, and head downstairs.</p>
+                
+                <p>The grand reveal is that within this forty-something room building, there are forty-something people.</p>
+                
+                <p>Seeing them all through the waist-height glass that runs along the wall of the common room, I wish I hadn't left it so late. Predictably, as I walk in, some glance, but others look, their gazes lingering. I wonder if they can tell I've been crying — or if it's the glasses.</p>
+                
+                <p>And then I look left. And see him.</p>
+                
+                <p>The noisy, crowded room blurs and shrinks, his attention meeting mine.</p>
+                
+                <p>I'd quickly looked away, and a peculiar force had pushed me in the opposite direction. Heading to the back corner of the room, I look for possible vacancies among the assembled blue school chairs before perching together with two other girls, on the surface of a pale blue coffee table, self-conscious of my red eyes. My stupid glasses. My me-ness.</p>
+                
+                <p>At 5:59pm, the common room door swings open, and the housemaster enters with an air of warning, already in a rush to leave. A doll-like girl with poker-straight amber coloured hair slips in behind him. She looks confident — insouciant even, though I don't quite believe her.</p>
+                
+                <p>Predictably dressed like a teacher in his cord trousers and round neck jumper, the housemaster has a flop of still-blond hair and the air of a northerner who still drank tequila and loved fun right up to the point his hair started receding and the pints were no longer being worked off by the rugby. He now lives in a house attached to student halls — a deal with the devil for cheap, perhaps even free, rent — and we are the downside of that deal.</p>
+                
+                <p>He's already sick of our shit, and he hasn't even met us yet.</p>
+                
+                <p>His welcome is not the welcome we'd expected. It's the tough love welcome. It grabs our excitement like a sleeping bag and packs it hard into its cover, compressing the air out of it.</p>
+                
+                <p>It is the first glint of reality that we have not just touched down on the tarmac in Alicante. That our life-altering shift is someone else's mundane. Someone else's 'that day of the year again.'</p>
+                
+                <p>As he speaks, there are chances to glance around the room. Most everyone in the room has a distinct ordinariness to them.</p>
+                
+                <p>When he says something about parties, the amber haired girl makes a quip in a Russian accent.</p>
+                
+                <p>She has misjudged him, and in three or four words, she is slain. The tone. The implied immaturity. Its humiliation is pure. And at the cruellest of moments.</p>
+                
+                <p>Maybe we needed it. Perhaps she was the sacrificial lamb over which our community bonded. It will be four weeks before anyone sees her again.</p>
+                
+                <p>After he leaves, conversations break out again and I start chatting to a girl called Steph. Steph's studying maths and is the kind of girl who always had a tissue up one sleeve to wipe the end of her nose. Bubbly and warm, her dark ringlets are pulled back tightly, her hair sprayed against her scalp.</p>
+                
+                <p>She's already in a duo with Kat, who's noticeably less friendly. Like a shop that doesn't really want your custom, but stops short of being rude about it. She has that kind of mum vibe, like she's already opted out of fashion in favour of comfort and might own an aga. There's something about their pairing that just makes sense.</p>
+                
+                <p>Everyone is going to the campus bar. I say I need to eat and ask if there are any shops nearby. Learning of my plight, Patrick discloses that Steph and Kate had took on his first trip to Tesco earlier that day and offers me a Kiev.</p>
+                
+                <p>Thirty minutes later, its golden butter pools on my plate. It's the best thing I've tasted since Heather Key gave me a packet of salt and vinegar Discos on the three hour bus ride from Bronze DofE.</p>
+                
+                <p>It's dark as we leave the hall, the campus serene, the air still mild. With every meter we traverse, we are claiming ownership of this place. Between us, the subtle hum of an unspoken excitement.</p>
+                
+                <p>The campus bar, much like the rest of the campus, looks like it could have been planned with LEGO. A small one storey building with the feeling of a local sports club bar or a community centre, felt noticeboards call out clubs and societies above thin wood panelling. Through more double doors, the bar itself: low, boxy, brown sofa chairs like the sixth form common room. A pool table. A big, terrible 90s sign announcing the name of the bar we already know we're in.</p>
+                
+                <p>An A4 poster sellotaped to the side of the bar tells us VKs are two for £2. No one has heard of VKs before but in eight weeks time we'll know every conceivable flavour, as well as some new ones we've created. We're still in the glory days of the tolerance and waistlines of level 2 binge drinkers. And VK is low alcohol enough to be affordable and sweet enough for those who barely like it anyway.</p>
+                
+                <p>I'd been hoping to see him again, and hoping not to. And I didn't.</p>
+                
+                <p>The night is unremarkable. A few new introductions. A few conversations testing for connections, like the little voltmeter we'd prong into circuits in D&T and see if it made the flat little buzz.</p>
+                
+                <p>A Sunday is always a Sunday, and inescapably so, no matter what the life-changing circumstances.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 5 -->
+        <article class="chapter" id="chapter-5">
+            <span class="chapter-number">Chapter Five</span>
+            <div class="chapter-content">
+                <p>I wasn't ready for the violence of it. For the round kick that took my legs out from under me.</p>
+                
+                <p>For a moment it was like waking up any other day. Then, a moment of disorientation. Realisation. And the feeling is back.</p>
+                
+                <p>It was as if I had been seized by some shock. Like staring into the headlights of an oncoming car drawn out from milliseconds to hours.</p>
+                
+                <p>Run. Run. Run. My nervous system screams at me. Urges. Begs. Knocks on my door at all hours, in all moments, until I sleep and then in that brief silent moment after waking, begins to knock again.</p>
+                
+                <p>It clings to my insides with a sense of panic, desperation, the need to be soothed. The feeling that makes it so hard to pull myself out of bed, yet eased by the fact that there is no comfort in this alien place anyway. It is showering in this new and strange shower, where I can hear strangers showering too. The memory of choosing an outfit for this day, and the disconnect between the feeling of this moment and that one.</p>
+                
+                <p>I am separated from the world by a thick membrane of dread. A light, persistent panic. Like 3am after leaving a nightclub when even the silence rings and you are suddenly separated from the sounds that exist below it. Suddenly separated from the world by your inability to experience it with the same fullness. Disoriented. As if feeling an object through gloves. Knowing none of its texture and only some of its form.</p>
+                
+                <p>I dress myself with heavy limbs.</p>
+                
+                <p>Every task is newly excruciating, requiring a monumental effort of will to coerce myself into. And none more than being around other people. But the message has always been push, push. PUSH.</p>
+                
+                <p>I haven't been shopping yet. No breakfast. My stomach couldn't take it anyway, there is already a whirl in there, a bubbling nausea. The pure focus has to be on doing.</p>
+                
+                <p class="scene-break">**</p>
+                
+                <p>The relentless push into the new and overwhelming continues as I navigate my way off Westwood campus, following the trail of students walking along the road in groups of twos and threes. They take a right into a leafy footpath.</p>
+                
+                <p>Emerging outside of campus, we come to a main road and cross another pathway. After a minute or two, the large low buildings begin to appear and here I am, on the main campus of Warwick University. An ode to concrete and the most basic and perfunctory designs that the last 40 years of architecture had had to offer. Unlike most of those around me, I've never seen it before. There was no visit.</p>
+                
+                <p>Another copier-paper map in my hand, I find my way to the building. My picture is taken for the pass.</p>
+                
+                <p>As I leave the building, the hunger has become disorienting, although I don't want to eat.</p>
+                
+                <p>Food has become another problem to solve. There are cafes, but with every moment I just want to be back in my dorm room. The home that is not home. I just want to close a door behind me and feel the tension ease like sinking into a hot bath. And I need to go food shopping anyway.</p>
+                
+                <p>The campus has one convenience store, buried at the bottom of the Students Union. It has the size and dated feel of a small Spanish supermarket. I add milk, cereal, Granny Smith apples and cordial to my basket. An apple-flavoured breakfast bar with a green and silver wrapper.</p>
+                
+                <p>There were no bags for the apples and they roll down the dull steel slope of the checkout one by one. It's not until I pick up the bags I've just packed that I realise the one element I've failed to consider – the fact that I now have to carry them home.</p>
+                
+                <p>Outside I peel back the shiny plastic wrapper of the apple and cinnamon breakfast bar. Its pale, stodgy snout confronts me with indifference. Against the nausea I lightly gag on its overly sweet, cloying intensity. Above me, the sky is the lightest of greys. It begins to rain.</p>
+                
+                <p>On the walk home, it doesn't take long before a familiar back pain kicks in between my shoulder blades. By the time I reach the edges of Westwood campus I am stopping every minute or so to set the bags down. The pain piles upon the stress, the sickness, the hunger, the lostness. The hardness. The difficulty. The reality of it all.</p>
+                
+                <p>Here I am, and it seems the universe has followed me, continuing to conspire against me. I feel stuck in my choice, out of place. There is no home anymore. There hasn't been for some months. But at least in those months everything else stayed the same. My room. My bed. My cat. My friends. Now we have all left, there is nothing there.</p>
+                
+                <p>The burning hole in my stomach, my aching arms and back, this feeling rising up. It's as if the rain is speaking to me, whispering into my soul. As if the world is some bully, always ready to punish me at my weakest moment. In a permanent state of retribution for some wrong I'm oblivious to have committed and never being willing to tell me, explain to me why or even admit to, exactly why I am the target of its derision. As if it wants to break something within me.</p>
+                
+                <p>"Give up. Give up".</p>
+                
+                <p>"Ha".</p>
+                
+                <p>Underlining. Underscoring my failures. My mistakes. My miscalculations.</p>
+                
+                <p>Finally I am back at halls.</p>
+                
+                <p>A feature of Bericote is that whenever you walk through those glass double doors, you can immediately see who is in the common room, and they can immediately see you.</p>
+                
+                <p>It's empty.</p>
+                
+                <p>I keep my head down, walking with purpose. Along the corridor, up two steps, along some more and then two flights leading directly to my door. I don't want to see them. Any of them. I've bought milk and it needs refrigerating.</p>
+                
+                <p>It's taken less than a day for my room to feel familiar. My room isn't home, but it has four walls. And I can close the door.</p>
+                
+                <p>I turn the key, dump the shopping inside, and close the door behind me, gratefully pressing my aching back into it. The milk can wait.</p>
+            </div>
+        </article>
+
+        <div class="chapter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- Chapter 8 -->
+        <article class="chapter" id="chapter-8">
+            <span class="chapter-number">Chapter Eight</span>
+            <div class="chapter-content">
+                <p>He came and spoke to me.</p>
+                
+                <p>He came and spoke.</p>
+                
+                <p>To me.</p>
+                
+                <p>It was casual. But it was intentional.</p>
+                
+                <p>I'd been sitting on a row of chairs that ran alongside the large windows.</p>
+                
+                <p>It was first Banana Monday of the term. In the world of student nights Monday night is apparently THE night of the week, which seems strange considering it's a Monday. I dress in night out uniform (indigo bootleg jeans and a purple cami with a small fuscia rose on the side of each strap), with the alteration of black round toe leather boots replacing my standard strappy black high heels – aware of the walk. We meet in the common room and there are a few more introductions. There must be around 25 of us, and we head to main campus en masse under a darkening sky.</p>
+                
+                <p>Nearly everyone else had been standing. He'd walked over, taken the seat next to me and started to make conversation.</p>
+                
+                <p>I was dumbfounded. If I'd have walked up to him, I'd have stumbled over my words. But the conversation was easy. Funny. Familiar. And it hummed like the transformer I used to walk past on the way to school. Alive. Safe. But dangerous.</p>
+                
+                <p>There is no cocky arrogance, that some guys rely on, that they know you're putty in their hands.</p>
+                
+                <p>I can't always be funny. I can't always be interesting.</p>
+                
+                <p>I can't always feel like myself. Only some people can make me feel that way. And it was rare.</p>
+                
+                <p>As we walked home that night, Kate complains of her feet and he offers her a piggy back joking, which she accepts calling his bluff, and he offers caller hers. Under the orange street light she bobs through the cool night air shrieking the shriek of the lightly tipsy and he runs slightly crouched catching up with the boys before returning her feet to their fate.</p>
+                
+                <p>There's a non-sensical pang of something. Not jealousy, Kate has a long-term boyfriend. Disappointment.</p>
+                
+                <p>We trail behind the boys.</p>
+                
+                <p>"God he is so fit"</p>
+                
+                <p>"He's so fit" Steph agrees.</p>
+                
+                <p>I let it stay rhetorical, filled with the hard won lessons of shallow female friendships. But inside I sigh the sweet sigh of the 1950s American girl looking up at a poster on her wall.</p>
+                
+                <p>"It's such a shame he has a girlfriend". And it is. A statement that passes with only my internal agreement. But only in the same way I was disappointed when Liverpool footballer Jamie Redknapp started dating Louise from Eternal. There had been a moment where, as I stared at his poster, I was sure I was destined to be with him. Even though it was highly unlikely, that glimmer of hope was a little spark of joy that danced in my soul.</p>
+                
+                <p>It was pure magic.</p>
+                
+                <p>Like that night.</p>
+                
+                <p>Like the exact specific temperature of the subtle crisp chill in the air.</p>
+                
+                <p>Like the hum that stayed with me. Since the first moment.</p>
+                
+                <p>Pure magic to even have that poster on my wall. To look at him.</p>
+                
+                <p>He was pure magic.</p>
+                
+                <p>Like Max.</p>
+                
+                <p class="scene-break">***</p>
+                
+                <p>We always used to keep the lottery ticket, in a small wicker basket with a little lid and loop next to the telephone. And on car journeys our parents would talk about what we'd do if we'd won. And my brother would interject with questions like "could we go here" and "would we go there". Everyone knew that, if you won you called Camelot, and then the next day you'd drive the ticket in. So part of the game became, who would you tell? Where would you keep the ticket? Some people said they'd stay up all night. Some people said they wouldn't be able to sleep anyway.</p>
+                
+                <p>You'd be that close, but the money wasn't yours yet.</p>
+                
+                <p>The way I couldn't right now.</p>
+                
+                <p>Perhaps I was just one of many he hadn't yet spoken to. It was the kind of thrill that you didn't want, like thinking you'd won the lottery only to realise you'd read the numbers wrong. The kind of high that you'd chase even if it was never worth the sickening lurch back to reality. It was the kind of thing you didn't want to dare to think because even being in his proximity was like something unnameable, but to actually think you might have some chance to go closer, deeper, and then to never find you could, would be devastating. It would be easier to view a duchesse satin Dior ballgown in its glass case at 16 and know one day you might wear it, than to view it at 36 and grieve what in reality had been true from the start.</p>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h3 class="footer-title">A Series of Interconnected Moments</h3>
+        <p class="footer-author">Victoria Ward</p>
+    </footer>
+
+    <script>
+        // Word falling animation
+        const words = document.querySelectorAll('.title-word');
+        const authorName = document.querySelector('.author-name');
+        const svg = document.getElementById('connectionsSvg');
+        
+        // Stagger the falling animation
+        words.forEach((word, index) => {
+            setTimeout(() => {
+                word.classList.add('fallen');
+            }, 300 + (index * 400));
+        });
+
+        // Show author name after all words have fallen
+        setTimeout(() => {
+            authorName.classList.add('visible');
+            drawConnections();
+        }, 300 + (words.length * 400) + 500);
+
+        // Draw connection lines between words
+        function drawConnections() {
+            const wordPositions = [];
+            
+            words.forEach(word => {
+                const rect = word.getBoundingClientRect();
+                wordPositions.push({
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                });
+            });
+
+            // Clear existing lines
+            svg.innerHTML = '';
+
+            // Create connections
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [3, 4],
+                [0, 3], [1, 4], [0, 4], [1, 3], [2, 4]
+            ];
+
+            connections.forEach(([i, j], index) => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', wordPositions[i].x);
+                line.setAttribute('y1', wordPositions[i].y);
+                line.setAttribute('x2', wordPositions[j].x);
+                line.setAttribute('y2', wordPositions[j].y);
+                line.classList.add('connection-line');
+                svg.appendChild(line);
+
+                // Animate lines appearing
+                setTimeout(() => {
+                    line.classList.add('visible');
+                }, index * 150);
+            });
+        }
+
+        // Redraw connections on resize
+        window.addEventListener('resize', () => {
+            if (authorName.classList.contains('visible')) {
+                drawConnections();
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -10% 0px',
+            threshold: 0.1
+        };
+
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe chapters
+        document.querySelectorAll('.chapter').forEach(chapter => {
+            fadeInObserver.observe(chapter);
+        });
+
+        // Observe epigraph
+        const epigraph = document.querySelector('.epigraph');
+        if (epigraph) fadeInObserver.observe(epigraph);
+
+        // Navigation dot click
+        const chapterDots = document.querySelectorAll('.chapter-dot');
+        chapterDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const chapterId = dot.dataset.chapter;
+                const targetChapter = document.getElementById(`chapter-${chapterId}`);
+                if (targetChapter) {
+                    targetChapter.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Update active dot on scroll
+        const chapters = document.querySelectorAll('.chapter');
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const chapterId = entry.target.id.replace('chapter-', '');
+                    chapterDots.forEach(dot => {
+                        dot.classList.remove('active');
+                        if (dot.dataset.chapter === chapterId) {
+                            dot.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: '-40% 0px -40% 0px' });
+
+        chapters.forEach(chapter => {
+            navObserver.observe(chapter);
+        });
+
+        // Progress bar
+        const progressBar = document.querySelector('.progress-bar');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            progressBar.style.width = `${scrollPercent}%`;
+        });
+    </script>
+</body>
+</html>
