@@ -392,6 +392,23 @@
             font-size: 1.1rem;
         }
 
+        /* Audio player styling */
+        .chapter-audio {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-audio audio {
+            width: 100%;
+            max-width: 300px;
+            height: 40px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .chapter-audio audio:hover {
+            opacity: 1;
+        }
+
 
         /* Short chapter special styling */
         .chapter.short-chapter .chapter-content p:first-of-type::first-letter {
@@ -599,6 +616,11 @@
         <!-- Prologue -->
         <article class="chapter" id="chapter-prologue">
             <span class="chapter-number">Prologue</span>
+            <div class="chapter-audio">
+                <audio controls preload="none">
+                    <source src="prologue.mp3" type="audio/mpeg">
+                </audio>
+            </div>
             <div class="chapter-content">
                 <p>I don't think anyone ever realises just how different the worlds we live in are. And not in the ordinary way people mean it, like where we live, or how much we have. Or even our story. Or our experiences. But what they form. The world as we have formed it. Inside our heads.</p>
                 
